@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CubeRunner
+namespace Tester
 {
 #if WINDOWS || LINUX
     /// <summary>
