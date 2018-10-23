@@ -3,16 +3,24 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using CameraLibrary;
 using System;
+using System.Collections.Generic;
 
 namespace Tester
 {
     public class Game1 : Game
     {
-        GraphicsDeviceManager graphics;
+        readonly GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Camera camera;
         Texture2D test;
         KeyboardState keyboard;
+
+        //Vector2 Transformation;
+        Matrix TranslationMatrix;
+        //float Rotation;
+        Matrix RotationMatrix;
+
+        Dictionary<Keys, Action> Actions;
 
         public Game1()
         {
@@ -33,46 +41,44 @@ namespace Tester
             spriteBatch = new SpriteBatch(GraphicsDevice);
             test = Content.Load<Texture2D>("TestTexture");
             camera = new Camera(Vector2.Zero, 1, 0, GraphicsDevice.Viewport.Bounds);
+
+            Actions = new Dictionary<Keys, Action>()
+            {
+                [Keys.W] = () => { }
+            };
+
             // TODO: use this.Content to load your game content here
         }
-        
+
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
         }
-        
+
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             keyboard = Keyboard.GetState();
+            Vector2 change = Vector2.Zero;
             if (keyboard.IsKeyDown(Keys.W))
-            {
-                camera.Position = new Vector2(camera.Position.X - 3 * (float)Math.Sin(camera.Rotation), camera.Position.Y - 3 * (float)Math.Cos(camera.Rotation));
-            }
+                change.Y -= 3;
             if (keyboard.IsKeyDown(Keys.S))
-            {
-                camera.Position = new Vector2(camera.Position.X + 3 * (float)Math.Sin(camera.Rotation), camera.Position.Y + 3 * (float)Math.Cos(camera.Rotation));
-            }
+                change.Y += 3;
             if (keyboard.IsKeyDown(Keys.A))
-            {
-                camera.Position = new Vector2(camera.Position.X - 3 * (float)Math.Cos(camera.Rotation), camera.Position.Y + 3 * (float)Math.Sin(camera.Rotation));
-            }
+                change.X -= 3;
             if (keyboard.IsKeyDown(Keys.D))
-            {
-                camera.Position = new Vector2(camera.Position.X + 3 * (float)Math.Cos(camera.Rotation), camera.Position.Y - 3 * (float)Math.Sin(camera.Rotation));
-            }
+                change.X += 3;
+            TranslationMatrix = Matrix.CreateTranslation(change.X, change.Y, 0);
+            float value = 0;
             if (keyboard.IsKeyDown(Keys.Left))
-            {
-                camera.Rotation += MathHelper.ToRadians(3);
-            }
+                value += 3;
             if (keyboard.IsKeyDown(Keys.Right))
-            {
-                camera.Rotation -= MathHelper.ToRadians(3);
-            }
+                value -= 3;
+            RotationMatrix = Matrix.CreateRotationZ(MathHelper.ToRadians(value));
             base.Update(gameTime);
         }
-        
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);

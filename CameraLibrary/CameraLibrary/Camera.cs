@@ -1,7 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,6 +16,7 @@ namespace CameraLibrary
                 TranslationMatrix = Matrix.CreateTranslation(new Vector3(-Position, 0));
             }
         }
+
         private float rotation;
         public float Rotation
         {
@@ -50,12 +48,12 @@ namespace CameraLibrary
             }
         }
 
-        public Matrix TranslationMatrix;
-        public Matrix RotationMatrix;
-        public Matrix ScaleMatrix;
-        public Matrix OffsetMatrix;
+        public Matrix TranslationMatrix { get; protected set; }
+        public Matrix RotationMatrix { get; protected set; }
+        public Matrix ScaleMatrix { get; protected set; }
+        public Matrix OffsetMatrix { get; protected set; }
 
-        public Matrix Transform => TranslationMatrix * RotationMatrix * ScaleMatrix * OffsetMatrix;
+        public Matrix Transform => TranslationMatrix * RotationMatrix * ScaleMatrix * OffsetMatrix;       
 
         public Camera(Vector2 position, float zoom, float rotation, Rectangle screenBounds)
         {
@@ -70,6 +68,11 @@ namespace CameraLibrary
             Zoom = 1f;
             Position = CameraOffset;
             Rotation = 0f;
+        }
+
+        public virtual void Update(GameTime gt)
+        {
+
         }
     }
 }
