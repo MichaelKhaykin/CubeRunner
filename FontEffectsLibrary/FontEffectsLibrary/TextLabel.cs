@@ -10,23 +10,24 @@ namespace FontEffectsLibrary
 {
     public class TextLabel
     {
-        private SpriteFont Font;
-        public Vector2 Position { get; set; }
+        protected LerpingColor LerpingColor;
 
-        private Queue<Color> colorsToLerpThrough;
-        private Color colorToLerpFrom;
+        protected SpriteFont Font;
 
-        public Color Color { get; set; }
+        private Vector2 position;
+        public ref Vector2 Position
+        {
+            get
+            {
+                return ref position;
+            }
+        }
+     
+        protected float Rotation { get; set; }
+        
+        protected string text;
 
-        public float Rotation { get; set; }
-
-        private float travelPercentage;
-
-        private float rateOfChange;
-
-        private string text;
-
-        public Vector2 Origin
+        protected Vector2 Origin
         {
             get
             {
@@ -38,45 +39,38 @@ namespace FontEffectsLibrary
             }
         }
 
-        public float Scale { get; set; }
+        protected Vector2 Scale { get; set; }
         
-        public TextLabel(SpriteFont font, Vector2 position, List<Color> colors, float rateOfChange, string text, float scale)
+        public TextLabel(SpriteFont font, Vector2 position, List<Color> colors, float rateOfChange, string text, Vector2 scale)
         {
-            Init(font, position, colors, text, scale);
-            this.rateOfChange = rateOfChange;
+            LerpingColor = new LerpingColor(rateOfChange, colors);
+
+            Init(font, position, text, scale);
+         }
+
+        public TextLabel(SpriteFont font, Vector2 position, Color color, string text, Vector2 scale)
+        {
+            LerpingColor = new LerpingColor(1, new List<Color>() { color });
+
+            Init(font, position, text, scale);
         }
 
-        public TextLabel(SpriteFont font, Vector2 position, Color color, string text, float scale)
-        {
-            Init(font, position, new List<Color>() { color }, text, scale);
-        }
-
-        private void Init(SpriteFont font, Vector2 position, List<Color> color, string text, float scale)
+        private void Init(SpriteFont font, Vector2 position, string text, Vector2 scale)
         {
             Font = font;
             Position = position;
             this.text = text;
-            colorsToLerpThrough = new Queue<Color>(color);
             Scale = scale;
         }
 
         public virtual void Update(GameTime gameTime)
         {
-            Color = Color.Lerp(colorToLerpFrom, colorsToLerpThrough.Peek(), travelPercentage);
-            travelPercentage += rateOfChange;
-
-            if(travelPercentage >= 1)
-            {
-                travelPercentage = 0f;
-
-                colorsToLerpThrough.Enqueue(colorToLerpFrom);
-                colorToLerpFrom = colorsToLerpThrough.Dequeue();
-            }
+            LerpingColor.Update(gameTime);
         }
 
         public virtual void Draw(SpriteBatch sb)
         {
-            sb.DrawString(Font, text, Position, Color, Rotation, Origin, Scale, SpriteEffects.None, 0f);
+            sb.DrawString(Font, text, Position, LerpingColor.Color, Rotation, Origin, Scale, SpriteEffects.None, 0f);
         }
     }
 }
