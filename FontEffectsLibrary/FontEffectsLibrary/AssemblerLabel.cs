@@ -8,79 +8,29 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FontEffectsLibrary
 {
-    public class AssemblerLabel : TextLabel
+    public partial class AssemblerLabel : TextLabel
     {
-        class LettetWithPosition
-        {
-            //add target position here
-
-            public char Letter;
-
-            public Vector2 Position;
-
-            public Vector2 GoalPosition;
-
-            public float Velocity;
-
-            protected Color Color;
-
-            public SpriteFont Font;
-
-            public Vector2 StartingPosition;
-
-            public float TravelPercentage;
-
-            public TimeSpan UpdateTime = TimeSpan.FromMilliseconds(18);
-
-            public TimeSpan ElapsedTime;
-
-            public bool IsVisible { get; set; } = true;
-
-            public LettetWithPosition(SpriteFont font, char letter, Vector2 position, Color color, Vector2 goalPosition, float velocity)
-            {
-                Font = font;
-                Letter = letter;
-                Position = position;
-                Color = color;
-                StartingPosition = Position;
-                TravelPercentage = 0f;
-                GoalPosition = goalPosition;
-                Velocity = velocity;
-            }
-
-            public void Draw(SpriteBatch sb)
-            {
-                if (IsVisible)
-                {
-                    sb.DrawString(Font, Letter.ToString(), Position, Color);
-                }
-            }
-        }
-
-        List<LettetWithPosition> letterList;
-
-        private int letterListIndex = 0;
-
+        List<Letter> letterList;
+        
         private Vector2 GoalPosition;
 
-        public AssemblerLabel(SpriteFont font, Vector2 position, List<Color> colors, float rateOfChange, string text, Vector2 scale, GraphicsDevice graphics)
+        public AssemblerLabel(SpriteFont font, Vector2 position, List<Color> colors, float rateOfChange, string text, Vector2 scale, GraphicsDevice graphics, float assemblerSpeed)
             : base(font, position, colors, rateOfChange, text, scale)
         {
-            Init(font, text, graphics);
+            Init(font, text, graphics, assemblerSpeed);
         }
 
-        public AssemblerLabel(SpriteFont font, Vector2 position, Color color, string text, Vector2 scale, GraphicsDevice graphics)
+        public AssemblerLabel(SpriteFont font, Vector2 position, Color color, string text, Vector2 scale, GraphicsDevice graphics, float assemblerSpeed)
             : base(font, position, color, text, scale)
         {
-            Init(font, text, graphics);
+            Init(font, text, graphics, assemblerSpeed);
         }
 
-        private void Init(SpriteFont font, string text, GraphicsDevice graphics)
+        private void Init(SpriteFont font, string text, GraphicsDevice graphics, float assemblerSpeed)
         {
-
             GoalPosition = Position;
 
-            letterList = new List<LettetWithPosition>();
+            letterList = new List<Letter>();
 
             Random rand = new Random();
 
@@ -114,24 +64,24 @@ namespace FontEffectsLibrary
 
                 //fix color later
 
-                letterList.Add(new LettetWithPosition(font, text[i], new Vector2(x, y), Color.Red, GoalPosition, 0.03f));
+                letterList.Add(new Letter(font, text[i], new Vector2(x, y), Color.Red, Vector2.Zero));
+                letterList[i].GoalPosition = GoalPosition;
+                letterList[i].Velocity = assemblerSpeed;
 
                 //each time we hit a space, calculate if the next word can fit on the screen
                 //if it can't, move to the next line
             }
 
+            bool prevStateOfNextLine = false;
+
             for (int i = 1; i < letterList.Count; i++)
             {
-
-                //fix 0.5 later this is really the gap
-                //if gap = 0 they would land at same time
-                //gap = gap between each letter land
                 bool nextLine = false;
-                if (letterList[i].Letter == ' ') // problem in here that folds first letters
+                if (letterList[i].Value == ' ') // problem in here that folds first letters
                 {
                     int length = 1;
                     bool eof = false;
-                    while (letterList[i + length].Letter != ' ' && eof == false)
+                    while (letterList[i + length].Value != ' ' && eof == false)
                     {
                         length++;
                         if (i + length >= letterList.Count)
@@ -142,6 +92,7 @@ namespace FontEffectsLibrary
                         }
                     }
 
+                    // + " " is to add some padding
                     if (GoalPosition.X + letterList[0].Font.MeasureString(Substring(i, length) + "  ").X > graphics.Viewport.Width)
                     {
                         nextLine = true;
@@ -152,21 +103,22 @@ namespace FontEffectsLibrary
                 {
                     lineCount++;
                     GoalPosition.X = letterList[0].GoalPosition.X;
-                    GoalPosition.Y = lineCount * (letterList[0].Font.MeasureString(letterList[0].Letter.ToString()).Y) + letterList[0].GoalPosition.Y;
+                    GoalPosition.Y = lineCount * (letterList[0].Font.MeasureString(letterList[0].Value.ToString()).Y) + letterList[0].GoalPosition.Y;
                 }
                 else
                 {
-                    GoalPosition.X += letterList[i].Font.MeasureString(letterList[i - 1].Letter.ToString()).X;
+                    if (!prevStateOfNextLine)
+                    {
+                        GoalPosition.X += letterList[i].Font.MeasureString(letterList[i - 1].Value.ToString()).X;
+                    }
                 }
 
                 letterList[i].GoalPosition = GoalPosition;
 
                 letterList[i].Velocity = letterList[i - 1].Velocity * 0.95f;
 
-                //PRINT LABOROM is not being printed at the end of the string
-                //but in fact at the beggining
-            }
-
+                prevStateOfNextLine = nextLine;
+            }    
         }
 
         public string Substring(int index, int length)
@@ -174,7 +126,7 @@ namespace FontEffectsLibrary
             StringBuilder build = new StringBuilder();
             for (int i = index; i < index + length; i++)
             {
-                build.Append(letterList[i].Letter);
+                build.Append(letterList[i].Value);
             }
 
             return build.ToString();
@@ -194,7 +146,6 @@ namespace FontEffectsLibrary
                 {
                     letterList[i + 1].Velocity = letterList[i].Velocity;
 
-
                     for (int j = i + 2; j < letterList.Count; j++)
                     {
                         //fix 0.5 later this is really the gap
@@ -204,42 +155,7 @@ namespace FontEffectsLibrary
                     }
                 }
             }
-
-
-
-            /*
-            while (letterListIndex < letterList.Count)
-            {
-                var currLetter = letterList[letterListIndex];
-                
-                currLetter.ElapsedTime += gameTime.ElapsedGameTime;
-
-                if(currLetter.ElapsedTime < currLetter.UpdateTime)
-                {
-                    break;
-                }
-
-                currLetter.ElapsedTime = TimeSpan.Zero;
-
-                currLetter.Position = Vector2.Lerp(currLetter.StartingPosition, GoalPosition, currLetter.TravelPercentage);
-                currLetter.TravelPercentage += 0.02f;
-
-                if(currLetter.TravelPercentage >= 1)
-                {
-                    letterListIndex++;
-
-                    if (letterListIndex >= letterList.Count)
-                    {
-                        break;
-                    }
-
-                    letterList[letterListIndex].IsVisible = true;
-
-                    var offset = currLetter.Font.MeasureString(currLetter.Letter.ToString()).X;
-                    GoalPosition.X += offset;
-                }
-            }
-            */
+           
             base.Update(gameTime);
         }
 
@@ -249,9 +165,6 @@ namespace FontEffectsLibrary
             {
                 letter.Draw(sb);
             }
-
-
-            //       base.Draw(sb);
         }
     }
 }

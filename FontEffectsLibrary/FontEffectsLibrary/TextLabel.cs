@@ -41,9 +41,9 @@ namespace FontEffectsLibrary
 
         protected Vector2 Scale { get; set; }
         
-        public TextLabel(SpriteFont font, Vector2 position, List<Color> colors, float rateOfChange, string text, Vector2 scale)
+        public TextLabel(SpriteFont font, Vector2 position, List<Color> colors, float rateOfColorChange, string text, Vector2 scale)
         {
-            LerpingColor = new LerpingColor(rateOfChange, colors);
+            LerpingColor = new LerpingColor(rateOfColorChange, colors);
 
             Init(font, position, text, scale);
          }

@@ -43,10 +43,14 @@
   <ItemGroup>
     <Compile Include="AssemblerLabel.cs" />
     <Compile Include="DropInLabel.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="LerpingColor.cs" />
+    <Compile Include="Letter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShadowLabel.cs" />
+    <Compile Include="ShakingLabel.cs" />
     <Compile Include="TextLabel.cs" />
+    <Compile Include="TypeWriterLabel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
