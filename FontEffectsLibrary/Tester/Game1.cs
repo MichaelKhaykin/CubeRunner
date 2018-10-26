@@ -18,6 +18,7 @@ namespace Tester
         AssemblerLabel assemblerLabel;
         TypeWriterLabel typeWriterLabel;
         ShakingLabel shakeyLabel;
+        WaveLabel waveLabel;
         //wave and particle 
 
         public static Random Random;
@@ -72,6 +73,8 @@ namespace Tester
 
             shakeyLabel = new ShakingLabel(font, new Vector2(100, 100), Color.White, "Bouncy", Vector2.One / 2);
 
+            waveLabel = new WaveLabel(font, new Vector2(100, 100), Color.White, "wave", Vector2.One, 50);
+
             /*
               "Lorem ipsum dolor sit amet, consectetur adipiscin elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
             */
@@ -88,7 +91,8 @@ namespace Tester
             assemblerLabel.Update(gameTime);
             typeWriterLabel.Update(gameTime);
             shakeyLabel.Update(gameTime);
-            
+            waveLabel.Update(gameTime);
+
             base.Update(gameTime);
         }
 
@@ -101,9 +105,10 @@ namespace Tester
             //textLabel.Draw(spriteBatch);
             // dropInlabel.Draw(spriteBatch);
             // shadowLabel.Draw(spriteBatch);
-            // assemblerLabel.Draw(spriteBatch);
-            // typeWriterLabel.Draw(spriteBatch);
-            shakeyLabel.Draw(spriteBatch);
+          //   assemblerLabel.Draw(spriteBatch);
+          //   typeWriterLabel.Draw(spriteBatch);
+            //shakeyLabel.Draw(spriteBatch);
+            waveLabel.Draw(spriteBatch);
 
             spriteBatch.End();
             

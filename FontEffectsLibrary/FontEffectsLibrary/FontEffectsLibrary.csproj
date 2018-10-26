@@ -51,6 +51,7 @@
     <Compile Include="ShakingLabel.cs" />
     <Compile Include="TextLabel.cs" />
     <Compile Include="TypeWriterLabel.cs" />
+    <Compile Include="WaveLabel.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
