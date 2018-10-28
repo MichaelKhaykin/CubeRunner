@@ -13,7 +13,7 @@ namespace FontEffectsLibrary
         Texture2D pixel;
         Vector2 position;
         Color color;
-
+        
 
     }
 }
