@@ -72,7 +72,7 @@ namespace CameraLibrary
 
         public virtual void Update(GameTime gt)
         {
-
+            
         }
     }
 }
