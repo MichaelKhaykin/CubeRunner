@@ -11,23 +11,18 @@ namespace Tester
     {
         readonly GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Camera camera;
+        ControlledCamera camera;
         Texture2D test;
         KeyboardState keyboard;
 
-        //Vector2 Transformation;
-        Matrix TranslationMatrix;
-        //float Rotation;
-        Matrix RotationMatrix;
-
-        Dictionary<Keys, Action> Actions;
+        Dictionary<Keys, ControlledCamera.Controls> translate;
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
         }
-        
+
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
@@ -40,13 +35,16 @@ namespace Tester
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             test = Content.Load<Texture2D>("TestTexture");
-            camera = new Camera(Vector2.Zero, 1, 0, GraphicsDevice.Viewport.Bounds);
-
-            Actions = new Dictionary<Keys, Action>()
+            camera = new ControlledCamera(Vector2.Zero, 1, 0, GraphicsDevice.Viewport.Bounds, 3f, 1f);
+            translate = new Dictionary<Keys, ControlledCamera.Controls>
             {
-                [Keys.W] = () => { }
+                [Keys.W] = ControlledCamera.Controls.Up,
+                [Keys.A] = ControlledCamera.Controls.Left,
+                [Keys.S] = ControlledCamera.Controls.Down,
+                [Keys.D] = ControlledCamera.Controls.Right,
+                [Keys.Q] = ControlledCamera.Controls.TurnLeft,
+                [Keys.E] = ControlledCamera.Controls.TurnRight
             };
-
             // TODO: use this.Content to load your game content here
         }
 
@@ -60,22 +58,15 @@ namespace Tester
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             keyboard = Keyboard.GetState();
-            Vector2 change = Vector2.Zero;
-            if (keyboard.IsKeyDown(Keys.W))
-                change.Y -= 3;
-            if (keyboard.IsKeyDown(Keys.S))
-                change.Y += 3;
-            if (keyboard.IsKeyDown(Keys.A))
-                change.X -= 3;
-            if (keyboard.IsKeyDown(Keys.D))
-                change.X += 3;
-            TranslationMatrix = Matrix.CreateTranslation(change.X, change.Y, 0);
-            float value = 0;
-            if (keyboard.IsKeyDown(Keys.Left))
-                value += 3;
-            if (keyboard.IsKeyDown(Keys.Right))
-                value -= 3;
-            RotationMatrix = Matrix.CreateRotationZ(MathHelper.ToRadians(value));
+            List<ControlledCamera.Controls> controls = new List<ControlledCamera.Controls>();
+            foreach (Keys key in keyboard.GetPressedKeys())
+            {
+                if (translate.ContainsKey(key))
+                {
+                    controls.Add(translate[key]);
+                }
+            }
+            camera.Update(controls.ToArray(), gameTime);
             base.Update(gameTime);
         }
 
