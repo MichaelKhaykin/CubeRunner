@@ -53,7 +53,7 @@ namespace Tester
 
             SpriteFont spriteFont = Content.Load<SpriteFont>("Font");          
 
-            gameFont = new GameFont(spriteFont, "Herro my good sir", new Vector2(800, -200), Color.Red, Vector2.One, Vector2.One / 2);
+            gameFont = new GameFont(spriteFont, "Herro my good sir", new Vector2(800, -200), Color.Red, Vector2.One, Vector2.Zero);
             gameFont.Commands.Enqueue(new List<Command>()
             {
                 new Command(CommandState.Create<DropInLabelStates>())
