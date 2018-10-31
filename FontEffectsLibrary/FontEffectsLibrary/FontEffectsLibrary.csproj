@@ -20,6 +20,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+    <DocumentationFile>bin\Debug\FontEffectsLibrary.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -42,8 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblerLabel.cs" />
+    <Compile Include="Command.cs" />
     <Compile Include="DropInLabel.cs" />
+    <Compile Include="Enums.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="FontFunctions.cs" />
+    <Compile Include="GameFont.cs" />
+    <Compile Include="GameObject.cs" />
     <Compile Include="LerpingColor.cs" />
     <Compile Include="Letter.cs" />
     <Compile Include="Particle.cs" />

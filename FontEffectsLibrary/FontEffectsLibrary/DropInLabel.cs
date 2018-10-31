@@ -11,14 +11,6 @@ namespace FontEffectsLibrary
 
     public class DropInLabel : TextLabel
     {
-        enum DropInLabelStates
-        {
-            GoDown,
-            Compress,
-            ExpandBack,
-            Done
-        }
-
         DropInLabelStates dropInLabelStates = DropInLabelStates.GoDown;
 
         private Vector2 GoalPosition;

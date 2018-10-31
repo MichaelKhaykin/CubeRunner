@@ -21,6 +21,8 @@ namespace Tester
         WaveLabel waveLabel;
         //wave and particle 
 
+        GameFont gameFont;
+
         public static Random Random;
 
         public Game1()
@@ -49,6 +51,46 @@ namespace Tester
 
             Random = new Random();
 
+            SpriteFont spriteFont = Content.Load<SpriteFont>("Font");          
+
+            gameFont = new GameFont(spriteFont, "Herro my good sir", new Vector2(800, -200), Color.Red, Vector2.One, Vector2.One / 2);
+            gameFont.Commands.Enqueue(new List<Command>()
+            {
+                new Command(CommandState.Create<DropInLabelStates>())
+                {
+                    Action = FontFunctions.DropInLabel,
+                    Parameters = new object[]
+                    {
+                        new Vector2(800, -200),
+                        new Vector2(800, 500),
+                        new Vector2(1.1f, 0.9f),
+                        0.09f
+                    },
+                    Rate = 0.01f
+                }
+            });
+            gameFont.Commands.Enqueue(new List<Command>()
+            {
+                new Command(CommandState.Create<AssemblerStates>())
+                {
+                    Action = FontFunctions.AssembleLabel,
+                    Parameters = new object[]
+                    {
+                        new Random(),
+                        GraphicsDevice,
+                        new Vector2(100, 100),
+                        0.03f
+                    }
+                }
+            });
+
+           // FontFunctions.AssembleLabel()
+
+
+            typeWriterLabel = new TypeWriterLabel(spriteFont, new Vector2(50, 10), Color.White, "Am typewriter, hello", Vector2.One, TimeSpan.FromMilliseconds(250));
+
+          //  gameFont = typeWriterLabel;
+
             List<Color> colors = new List<Color>();
             colors.Add(Color.Red);
             colors.Add(Color.Yellow);
@@ -62,7 +104,6 @@ namespace Tester
 
             textLabel = new TextLabel(font, new Vector2(800, 400), colors, 0.05f, "Hello", Vector2.One / 2);
 
-            //IMPORTANT NUMBERS 0.01, and 0.09
             dropInlabel = new DropInLabel(font, new Vector2(800, -200), Color.Orange, "Herro my good sir", Vector2.One, new Vector2(800, 400), 0.01f, 0.09f);
 
             shadowLabel = new ShadowLabel(shadowFont, new Vector2(800, 400), Color.Orange, "Great Minds", Vector2.One);
@@ -74,10 +115,7 @@ namespace Tester
             shakeyLabel = new ShakingLabel(font, new Vector2(100, 100), Color.White, "Bouncy", Vector2.One / 2);
 
             waveLabel = new WaveLabel(font, new Vector2(100, 100), Color.White, "wave", Vector2.One, 50);
-
-            /*
-              "Lorem ipsum dolor sit amet, consectetur adipiscin elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-            */
+            
         }   
 
         protected override void Update(GameTime gameTime)
@@ -85,11 +123,14 @@ namespace Tester
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
+            
+            gameFont.Update(gameFont, gameTime);
+
             textLabel.Update(gameTime);
             dropInlabel.Update(gameTime);
             shadowLabel.Update(gameTime);
             assemblerLabel.Update(gameTime);
-            typeWriterLabel.Update(gameTime);
+            //typeWriterLabel.Update(gameTime);
             shakeyLabel.Update(gameTime);
             waveLabel.Update(gameTime);
 
@@ -105,10 +146,12 @@ namespace Tester
             //textLabel.Draw(spriteBatch);
             // dropInlabel.Draw(spriteBatch);
             // shadowLabel.Draw(spriteBatch);
-          //   assemblerLabel.Draw(spriteBatch);
-          //   typeWriterLabel.Draw(spriteBatch);
+            //   assemblerLabel.Draw(spriteBatch);
+            //   typeWriterLabel.Draw(spriteBatch);
             //shakeyLabel.Draw(spriteBatch);
-            waveLabel.Draw(spriteBatch);
+            //    waveLabel.Draw(spriteBatch);
+
+            gameFont.Draw(spriteBatch);
 
             spriteBatch.End();
             

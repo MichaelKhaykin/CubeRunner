@@ -39,7 +39,7 @@ namespace FontEffectsLibrary
 
             for (int i = 0; i < text.Length; i++)
             {
-                Letters.Add(new Letter(font, text[i], Position + oldPos, color, Vector2.Zero));
+                Letters.Add(new Letter(font, text[i], Position + oldPos, color, Vector2.Zero, Vector2.One));
                 Letters[i].GoalPosition = new Vector2(Letters[i].Position.X, Position.Y - AmountToGoUpBy);
 
                 oldPos.X += font.MeasureString(text[i].ToString()).X;

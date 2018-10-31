@@ -64,7 +64,7 @@ namespace FontEffectsLibrary
 
                 //fix color later
 
-                letterList.Add(new Letter(font, text[i], new Vector2(x, y), Color.Red, Vector2.Zero));
+                letterList.Add(new Letter(font, text[i], new Vector2(x, y), Color.Red, Vector2.Zero, Vector2.One));
                 letterList[i].GoalPosition = GoalPosition;
                 letterList[i].Velocity = assemblerSpeed;
 
@@ -93,7 +93,7 @@ namespace FontEffectsLibrary
                     }
 
                     // + " " is to add some padding
-                    if (GoalPosition.X + letterList[0].Font.MeasureString(Substring(i, length) + "  ").X > graphics.Viewport.Width)
+                    if (GoalPosition.X + letterList[0].Font.MeasureString(letterList.Substring(i, length) + "  ").X > graphics.Viewport.Width)
                     {
                         nextLine = true;
                     }
@@ -121,16 +121,7 @@ namespace FontEffectsLibrary
             }    
         }
 
-        public string Substring(int index, int length)
-        {
-            StringBuilder build = new StringBuilder();
-            for (int i = index; i < index + length; i++)
-            {
-                build.Append(letterList[i].Value);
-            }
-
-            return build.ToString();
-        }
+      
 
         public override void Update(GameTime gameTime)
         {

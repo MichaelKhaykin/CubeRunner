@@ -17,5 +17,16 @@ namespace FontEffectsLibrary
             }
             return text;
         }
+
+        public static string Substring(this List<Letter> letterList, int index, int length)
+        {
+            StringBuilder build = new StringBuilder();
+            for (int i = index; i < index + length; i++)
+            {
+                build.Append(letterList[i].Value);
+            }
+
+            return build.ToString();
+        }
     }
 }

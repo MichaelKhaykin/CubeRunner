@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace FontEffectsLibrary
 {
-    public class TypeWriterLabel : TextLabel
+    public class TypeWriterLabel : GameFont
     {
         StringBuilder TextBuilder;
         int index = 1;
@@ -18,27 +18,15 @@ namespace FontEffectsLibrary
         TimeSpan elapsedTime;
 
         public TypeWriterLabel(SpriteFont font, Vector2 position, Color color, string text, Vector2 scale, TimeSpan timeBetweenLetter) 
-            : base(font, position, color, text, scale)
+            : base(font, text, position, color, scale, Vector2.Zero)
         {
             TextBuilder = new StringBuilder(text);
             timeBetweenNextLetter = timeBetweenLetter;
         }
-
-        public override void Update(GameTime gameTime)
-        {
-            elapsedTime += gameTime.ElapsedGameTime;
-
-            if(elapsedTime >= timeBetweenNextLetter && index < TextBuilder.Length + 1)
-            {
-                currentText = TextBuilder.Slice(0, index);
-                elapsedTime = TimeSpan.Zero;
-                index++;
-            }
-        }
-
+        
         public override void Draw(SpriteBatch sb)
         {
-            sb.DrawString(Font, currentText, Position, LerpingColor.Color);
+            sb.DrawString(Font, currentText, Position, Color);
         }
     }
 }

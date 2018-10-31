@@ -18,7 +18,7 @@ namespace FontEffectsLibrary
 
         public SpriteFont Font;
 
-        protected Vector2 Origin;
+        public Vector2 Origin;
 
         public Vector2 StartingPosition;
 
@@ -32,7 +32,9 @@ namespace FontEffectsLibrary
 
         public bool IsVisible { get; set; } = true;
 
-        public Letter(SpriteFont font, char letter, Vector2 position, Color color, Vector2 origin)
+        public Vector2 Scale { get; set; }
+
+        public Letter(SpriteFont font, char letter, Vector2 position, Color color, Vector2 origin, Vector2 scale)
         {
             Font = font;
             Value = letter;
@@ -40,14 +42,16 @@ namespace FontEffectsLibrary
             Color = color;
             StartingPosition = Position;
             TravelPercentage = 0f;
-            Origin = origin;
+            Scale = scale;
+
+            Origin = font.MeasureString(Value.ToString()) * origin;
         }
 
         public void Draw(SpriteBatch sb)
         {
             if (IsVisible)
             {
-                sb.DrawString(Font, Value.ToString(), Position, Color, Rotation, Origin, 1f, SpriteEffects.None, 0f);
+                sb.DrawString(Font, Value.ToString(), Position, Color, Rotation, Origin, Scale, SpriteEffects.None, 0f);
             }
         }
     }
