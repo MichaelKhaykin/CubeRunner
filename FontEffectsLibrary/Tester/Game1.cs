@@ -56,21 +56,6 @@ namespace Tester
             gameFont = new GameFont(spriteFont, "Herro my good sir", new Vector2(800, -200), Color.Red, Vector2.One, Vector2.Zero);
             gameFont.Commands.Enqueue(new List<Command>()
             {
-                new Command(CommandState.Create<DropInLabelStates>())
-                {
-                    Action = FontFunctions.DropInLabel,
-                    Parameters = new object[]
-                    {
-                        new Vector2(800, -200),
-                        new Vector2(800, 500),
-                        new Vector2(1.1f, 0.9f),
-                        0.09f
-                    },
-                    Rate = 0.01f
-                }
-            });
-            gameFont.Commands.Enqueue(new List<Command>()
-            {
                 new Command(CommandState.Create<AssemblerStates>())
                 {
                     Action = FontFunctions.AssembleLabel,
@@ -83,7 +68,22 @@ namespace Tester
                     }
                 }
             });
-
+            gameFont.Commands.Enqueue(new List<Command>()
+            {
+                new Command(CommandState.Create<DropInLabelStates>())
+                {
+                    Action = FontFunctions.DropInLabel,
+                    Parameters = new object[]
+                    {
+                        new Vector2(100, 100),
+                        new Vector2(100, 500),
+                        new Vector2(1.1f, 0.9f),
+                        0.09f
+                    },
+                    Rate = 0.01f
+                }
+            });
+     
            // FontFunctions.AssembleLabel()
 
 
