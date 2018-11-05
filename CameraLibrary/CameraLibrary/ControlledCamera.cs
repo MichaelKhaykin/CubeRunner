@@ -22,11 +22,11 @@ namespace CameraLibrary
         public float Speed;
         public float TurnSpeed;
 
-        public ControlledCamera(Vector2 position, Rectangle screenBounds)
-            : this(position, 1f, 0f, screenBounds, 1f, 1f) { }
+        public ControlledCamera(Vector3 position, Rectangle screenBounds)
+            : this(position, screenBounds, 1f, 1f) { }
 
-        public ControlledCamera(Vector2 position, float zoom, float rotation, Rectangle screenBounds, float speed, float turnSpeed)
-            : base(position, zoom, rotation, screenBounds)
+        public ControlledCamera(Vector3 position, Rectangle screenBounds, float speed, float turnSpeed)
+            : base(position, screenBounds)
         {
             Speed = speed;
             TurnSpeed = turnSpeed;
@@ -34,22 +34,21 @@ namespace CameraLibrary
 
         public void Update(Controls[] inputs, GameTime gt)
         {
-            Vector2 translation = Vector2.Zero;
             foreach (Controls direction in inputs)
             {
                 switch (direction)
                 {
                     case Controls.Up:
-                        translation.Y -= Speed;
+                        Position -= TranslationMatrix.Up * Speed;
                         break;
                     case Controls.Down:
-                        translation.Y += Speed;
+                        Position += TranslationMatrix.Up * Speed;
                         break;
                     case Controls.Left:
-                        translation.X -= Speed;
+                        Position += TranslationMatrix.Left * Speed;
                         break;
                     case Controls.Right:
-                        translation.X += Speed;
+                        Position -= TranslationMatrix.Left * Speed;
                         break;
                     case Controls.TurnLeft:
                         Rotation += TurnSpeed * (float)gt.ElapsedGameTime.TotalSeconds;
@@ -59,9 +58,6 @@ namespace CameraLibrary
                         break;
                 }
             }
-
-            Position += translation;
-
         }
     }
 }

@@ -6,14 +6,14 @@ namespace CameraLibrary
 {
     public class Camera
     {
-        private Vector2 position;
-        public Vector2 Position
+        private Vector3 position;
+        public Vector3 Position
         {
             get => position;
             set
             {
                 position = value;
-                TranslationMatrix = Matrix.CreateTranslation(new Vector3(-Position, 0));
+                TranslationMatrix = Matrix.CreateTranslation(-Position);
             }
         }
 
@@ -37,14 +37,14 @@ namespace CameraLibrary
                 ScaleMatrix = Matrix.CreateScale(new Vector3(Zoom, Zoom, 0));
             }
         }
-        private Vector2 cameraOffset;
-        public Vector2 CameraOffset
+        private Vector3 cameraOffset;
+        public Vector3 CameraOffset
         {
             get => cameraOffset;
             set
             {
                 cameraOffset = value;
-                OffsetMatrix = Matrix.CreateTranslation(new Vector3(CameraOffset, 0));
+                OffsetMatrix = Matrix.CreateTranslation(cameraOffset);
             }
         }
 
@@ -53,14 +53,14 @@ namespace CameraLibrary
         public Matrix ScaleMatrix { get; protected set; }
         public Matrix OffsetMatrix { get; protected set; }
 
-        public Matrix Transform => TranslationMatrix * RotationMatrix * ScaleMatrix * OffsetMatrix;       
+        public Matrix World => ScaleMatrix * RotationMatrix * TranslationMatrix * OffsetMatrix;
 
-        public Camera(Vector2 position, float zoom, float rotation, Rectangle screenBounds)
+        public Camera(Vector3 position, Rectangle screenBounds)
         {
             Position = position;
             Zoom = 1f;
-            Rotation = rotation;
-            CameraOffset = new Vector2(screenBounds.Width / 2f, screenBounds.Height / 2f);
+            Rotation = 0f;
+            CameraOffset = new Vector3(screenBounds.Width / 2f, screenBounds.Height / 2f, 0);
         }
 
         public void Reset()

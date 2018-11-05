@@ -35,7 +35,7 @@ namespace Tester
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             test = Content.Load<Texture2D>("TestTexture");
-            camera = new ControlledCamera(Vector2.Zero, 1, 0, GraphicsDevice.Viewport.Bounds, 3f, 1f);
+            camera = new ControlledCamera(Vector3.Zero, GraphicsDevice.Viewport.Bounds, 3f, 1f);
             translate = new Dictionary<Keys, ControlledCamera.Controls>
             {
                 [Keys.W] = ControlledCamera.Controls.Up,

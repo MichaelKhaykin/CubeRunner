@@ -9,6 +9,6 @@ namespace CameraLibrary
 {
     public interface ICameraFollowable
     {
-        Vector2 Position { get; }
+        Vector3 Position { get; }
     }
 }
