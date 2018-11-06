@@ -11,7 +11,7 @@ namespace CameraLibrary
     {
         public static void Begin(this SpriteBatch spriteBatch, Camera camera)
         {
-            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.Transform);
+            spriteBatch.Begin(SpriteSortMode.Deferred, null, null, null, null, null, camera.World);
         }
     }
 }

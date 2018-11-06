@@ -10,8 +10,8 @@ namespace CameraLibrary
     public class FollowerCamera : Camera
     {
         public ICameraFollowable Target;
-        public FollowerCamera(ICameraFollowable followMe, float zoom, float rotation, Rectangle screenBounds)
-            : base(followMe.Position, zoom, rotation, screenBounds)
+        public FollowerCamera(ICameraFollowable followMe, Rectangle screenBounds)
+            : base(followMe.Position, screenBounds)
         {
             Target = followMe;
         }
