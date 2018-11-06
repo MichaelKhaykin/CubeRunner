@@ -24,7 +24,8 @@ namespace CameraLibrary
             set
             {
                 rotation = value;
-                RotationMatrix = Matrix.CreateRotationZ(rotation);
+                //RotationMatrix = Matrix.CreateRotationZ(rotation);
+                RotationMatrix = Matrix.CreateFromAxisAngle(Vector3.UnitZ, rotation);
             }
         }
         private float zoom;
@@ -53,7 +54,7 @@ namespace CameraLibrary
         public Matrix ScaleMatrix { get; protected set; }
         public Matrix OffsetMatrix { get; protected set; }
 
-        public Matrix World => ScaleMatrix * RotationMatrix * TranslationMatrix * OffsetMatrix;
+        public Matrix World => ScaleMatrix  * TranslationMatrix * RotationMatrix * OffsetMatrix;
 
         public Camera(Vector3 position, Rectangle screenBounds)
         {

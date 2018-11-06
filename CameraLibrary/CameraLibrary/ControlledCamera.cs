@@ -39,16 +39,16 @@ namespace CameraLibrary
                 switch (direction)
                 {
                     case Controls.Up:
-                        Position -= TranslationMatrix.Up * Speed;
+                        Position -= Vector3.Transform(Vector3.Up, Matrix.CreateRotationZ(-Rotation)) * Speed;
                         break;
                     case Controls.Down:
-                        Position += TranslationMatrix.Up * Speed;
+                        Position -= Vector3.Transform(Vector3.Down, Matrix.CreateRotationZ(-Rotation)) * Speed;
                         break;
                     case Controls.Left:
-                        Position += TranslationMatrix.Left * Speed;
+                        Position += Vector3.Transform(Vector3.Left, Matrix.CreateRotationZ(-Rotation)) * Speed;
                         break;
                     case Controls.Right:
-                        Position -= TranslationMatrix.Left * Speed;
+                        Position += Vector3.Transform(Vector3.Right, Matrix.CreateRotationZ(-Rotation)) * Speed;
                         break;
                     case Controls.TurnLeft:
                         Rotation += TurnSpeed * (float)gt.ElapsedGameTime.TotalSeconds;
