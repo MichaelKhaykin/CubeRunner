@@ -2,22 +2,29 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace PhysicsLibrary
 {
-    public interface IGameObject
-    {
-        Vector2 Position { get; }
-    }
-
     public class PhysicsObject
     {
-        public Rectangle Hitbox;
+        public RectangleF Hitbox;
+        public Vector2 Position => new Vector2(Hitbox.X, Hitbox.Y);
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public Vector2 Velocity;
+        public float Mass;
+        public float FrictionCoefficient;
+        
+        public PhysicsObject(RectangleF hitbox, Vector2 velocity, float mass, float frictionCoefficient)
         {
-            throw new NotImplementedException();
+            Hitbox = hitbox;
+        }
+
+        public virtual void Update()
+        {
+            Hitbox.Location = new PointF(Hitbox.X + Velocity.X, Hitbox.Y + Velocity.Y);
+            Velocity.Y -= PhysicsConstants.Gravity;
         }
     }
 }
