@@ -7,10 +7,32 @@ using System.Text;
 
 namespace PhysicsLibrary
 {
+    public static class PointFExtensions
+    {
+        public static Vector2 ToVector2(this PointF point)
+        {
+            return new Vector2(point.X, point.Y);
+        }
+
+        public static PointF ToPointF(this Vector2 vector)
+        {
+            return new PointF(vector.X, vector.Y);
+        }
+    }
+
     public class PhysicsObject
     {
         public RectangleF Hitbox;
-        public Vector2 Position => new Vector2(Hitbox.X, Hitbox.Y);
+        public Vector2 Position
+        {
+            get => new Vector2(Hitbox.X, Hitbox.Y);
+            set
+            {
+                Hitbox.X = value.X;
+                Hitbox.Y = value.Y;
+            }
+        }
+        public Vector2 Center => Hitbox.Location.ToVector2() + new Vector2(Hitbox.Width / 2f, Hitbox.Height / 2f);
 
         public Vector2 Velocity;
         public float Mass;
@@ -25,6 +47,35 @@ namespace PhysicsLibrary
         {
             Hitbox.Location = new PointF(Hitbox.X + Velocity.X, Hitbox.Y + Velocity.Y);
             Velocity.Y -= PhysicsConstants.Gravity;
+        }
+
+        public virtual void UpdateRelative(ref PhysicsObject other)
+        {
+            if (!Hitbox.IntersectsWith(other.Hitbox))
+                return;
+            if (Mass == float.PositiveInfinity && other.Mass == float.PositiveInfinity)
+                return;
+            Vector2 difference = other.Center - Center;
+            float angle = (float)Math.Atan2(Math.Abs(difference.Y), Math.Abs(difference.X));
+            Vector2 impulse = Vector2.Transform(difference, Matrix.CreateRotationZ(angle));
+            if (Mass == float.PositiveInfinity)
+            {
+                other.Velocity = Vector2.Transform(other.Velocity, Matrix.CreateRotationZ(angle));
+            }
+            else if (other.Mass == float.PositiveInfinity)
+            {
+                Velocity += impulse;
+            }
+            else
+            {
+                float massRatio = Mass / other.Mass;
+                Position += impulse / massRatio;
+            }
+        }
+
+        public virtual bool Intersects(PhysicsObject other)
+        {
+            return Hitbox.IntersectsWith(other.Hitbox);
         }
     }
 }
