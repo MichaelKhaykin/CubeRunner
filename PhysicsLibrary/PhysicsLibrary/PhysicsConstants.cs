@@ -6,7 +6,7 @@ namespace PhysicsLibrary
 {
     public static class PhysicsConstants
     {
-        public static float Gravity = 0f;
-        public static float Drag = 0f;
+        public const float Gravity = -0.0078125f;
+        public const float Drag = 0f;
     }
 }

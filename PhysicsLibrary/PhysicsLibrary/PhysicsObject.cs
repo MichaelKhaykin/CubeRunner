@@ -41,12 +41,18 @@ namespace PhysicsLibrary
         public PhysicsObject(RectangleF hitbox, Vector2 velocity, float mass, float frictionCoefficient)
         {
             Hitbox = hitbox;
+            Velocity = velocity;
+            Mass = mass;
+            FrictionCoefficient = frictionCoefficient;
         }
 
         public virtual void Update()
         {
             Hitbox.Location = new PointF(Hitbox.X + Velocity.X, Hitbox.Y + Velocity.Y);
-            Velocity.Y -= PhysicsConstants.Gravity;
+            if (Mass != float.PositiveInfinity)
+            {
+                Velocity.Y -= PhysicsConstants.Gravity;
+            }
         }
 
         public virtual void UpdateRelative(ref PhysicsObject other)
@@ -57,19 +63,20 @@ namespace PhysicsLibrary
                 return;
             Vector2 difference = other.Center - Center;
             float angle = (float)Math.Atan2(Math.Abs(difference.Y), Math.Abs(difference.X));
-            Vector2 impulse = Vector2.Transform(difference, Matrix.CreateRotationZ(angle));
+            Vector2 impulse = Vector2.Transform(new Vector2(0, Vector2.Distance(other.Center, Center)), Matrix.CreateRotationZ(angle));
             if (Mass == float.PositiveInfinity)
             {
-                other.Velocity = Vector2.Transform(other.Velocity, Matrix.CreateRotationZ(angle));
+                other.Velocity = -other.Velocity;
             }
             else if (other.Mass == float.PositiveInfinity)
             {
-                Velocity += impulse;
+                Velocity = -Velocity;
             }
             else
             {
                 float massRatio = Mass / other.Mass;
                 Position += impulse / massRatio;
+                other.Position -= impulse * other.Mass;
             }
         }
 
