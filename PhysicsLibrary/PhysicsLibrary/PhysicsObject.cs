@@ -37,13 +37,15 @@ namespace PhysicsLibrary
         public Vector2 Velocity;
         public float Mass;
         public float FrictionCoefficient;
+        public float Elasticity;
         
-        public PhysicsObject(RectangleF hitbox, Vector2 velocity, float mass, float frictionCoefficient)
+        public PhysicsObject(RectangleF hitbox, Vector2 velocity, float mass, float frictionCoefficient, float elasticity)
         {
             Hitbox = hitbox;
             Velocity = velocity;
             Mass = mass;
             FrictionCoefficient = frictionCoefficient;
+            Elasticity = Math.Min(Math.Max(elasticity, 0), 1);
         }
 
         public virtual void Update()
@@ -66,11 +68,11 @@ namespace PhysicsLibrary
             Vector2 impulse = Vector2.Transform(new Vector2(0, Vector2.Distance(other.Center, Center)), Matrix.CreateRotationZ(angle));
             if (Mass == float.PositiveInfinity)
             {
-                other.Velocity = -other.Velocity;
+                other.Velocity = -other.Velocity * Elasticity;
             }
             else if (other.Mass == float.PositiveInfinity)
             {
-                Velocity = -Velocity;
+                Velocity = -Velocity * other.Elasticity;
             }
             else
             {
