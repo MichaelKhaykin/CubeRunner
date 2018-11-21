@@ -33,6 +33,7 @@ namespace PhysicsLibrary
             }
         }
         public Vector2 Center => Hitbox.Location.ToVector2() + new Vector2(Hitbox.Width / 2f, Hitbox.Height / 2f);
+        public Vector2 Momentum => Velocity * Mass;
 
         public Vector2 Velocity;
         public float Mass;
@@ -63,15 +64,23 @@ namespace PhysicsLibrary
                 return;
             if (Mass == float.PositiveInfinity && other.Mass == float.PositiveInfinity)
                 return;
+
             Vector2 difference = other.Center - Center;
-            float angle = (float)Math.Atan2(Math.Abs(difference.Y), Math.Abs(difference.X));
-            Vector2 impulse = Vector2.Transform(new Vector2(0, Vector2.Distance(other.Center, Center)), Matrix.CreateRotationZ(angle));
+            float differenceAngle = (float)Math.Atan2(difference.Y, difference.X);
+            Vector2 impulse = Vector2.Transform(new Vector2(Vector2.Distance(other.Center, Center), 0), Matrix.CreateRotationZ(differenceAngle));
+            
+            Vector2 netMomentum = Momentum + other.Momentum;
+            float angle = (float)Math.Atan2(Velocity.Y, Velocity.X);
+            float otherAngle = (float)Math.Atan2(other.Velocity.Y, other.Velocity.X);
+
             if (Mass == float.PositiveInfinity)
             {
+                other.Position += impulse;
                 other.Velocity = -other.Velocity * Elasticity;
             }
             else if (other.Mass == float.PositiveInfinity)
             {
+                Position -= impulse;
                 Velocity = -Velocity * other.Elasticity;
             }
             else
@@ -79,6 +88,11 @@ namespace PhysicsLibrary
                 float massRatio = Mass / other.Mass;
                 Position += impulse / massRatio;
                 other.Position -= impulse * other.Mass;
+            }
+
+            if (netMomentum != Momentum + other.Momentum)
+            {
+                throw new Exception("Momentum is not conserved.");
             }
         }
 
