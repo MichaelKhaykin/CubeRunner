@@ -12,8 +12,8 @@ namespace PhysicsLibrary
         public Texture2D Texture;
         public Microsoft.Xna.Framework.Color Tint;
 
-        public PhysicsSprite(Vector2 position, Texture2D texture, Microsoft.Xna.Framework.Color tint, Vector2 velocity, float mass, float frictionCoefficient, float elasticity)
-            : base(new RectangleF(position.X, position.Y, texture.Width, texture.Height), velocity, mass, frictionCoefficient, elasticity)
+        public PhysicsSprite(Vector2 position, Texture2D texture, Microsoft.Xna.Framework.Color tint, Vector2 velocity, float mass, float elasticity)
+            : base(new RectangleF(position.X, position.Y, texture.Width, texture.Height), velocity, mass, elasticity)
         {
             Texture = texture;
             Tint = tint;

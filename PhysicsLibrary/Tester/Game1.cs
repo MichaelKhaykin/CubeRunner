@@ -45,11 +45,11 @@ namespace Tester
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 2, 1f, 1f);
+            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 2, 1f);
             playerLeft = Content.Load<Texture2D>("playerLeft");
             playerForward = Content.Load<Texture2D>("playerForward");
             playerRight = Content.Load<Texture2D>("playerRight");
-            player = new PhysicsSprite(new Vector2(100, 84), playerForward, Color.White, Vector2.Zero, 1, 1f, 1f);
+            player = new PhysicsSprite(new Vector2(100, 84), playerForward, Color.White, Vector2.Zero, 1, 1f);
             playerDirection = Directions.Forward;
             pixel = Content.Load<Texture2D>("pixel");
             // TODO: use this.Content to load your game content here
@@ -65,6 +65,10 @@ namespace Tester
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             keyboard = Keyboard.GetState();
+            if (keyboard.IsKeyDown(Keys.Space))
+            {
+                player.Velocity = Vector2.Zero;
+            }
             if (keyboard.IsKeyDown(Keys.A) && keyboard.IsKeyUp(Keys.D))
             {
                 if (playerDirection != Directions.Left)
@@ -108,7 +112,7 @@ namespace Tester
             floor.Update();
             floor.Velocity *= 0.99f;
             var derp = floor as PhysicsObject;
-            player.UpdateRelative(ref derp, spriteBatch, pixel);
+            player.UpdateRelative(ref derp);
             player.Position = new Vector2(player.Position.X % GraphicsDevice.Viewport.Width, player.Position.Y % GraphicsDevice.Viewport.Height);
             while (player.Position.Y < 0)
             {
