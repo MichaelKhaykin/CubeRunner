@@ -38,9 +38,7 @@ namespace PhysicsLibrary
         }
         public Vector2 Center => Hitbox.Location.ToVector2() + new Vector2(Hitbox.Width / 2f, Hitbox.Height / 2f);
         public Vector2 Momentum => Velocity * Mass;
-
-        Vector2 impulse;
-
+        
         public PhysicsObject(RectangleF hitbox, Vector2 velocity, float mass, float restitution)
         {
             Hitbox = hitbox;
@@ -58,8 +56,11 @@ namespace PhysicsLibrary
             }
         }
 
+        Vector2 drawVector;
+
         public virtual void UpdateRelative(ref PhysicsObject other)
         {
+            drawVector = other.Position - Position;
             if (!Hitbox.IntersectsWith(other.Hitbox))
             {
                 return;
@@ -69,7 +70,23 @@ namespace PhysicsLibrary
                 return;
             }
 
+            Vector2 contactForce = (new Vector2(-Velocity.X, Velocity.Y) * Mass + new Vector2(-other.Velocity.X, other.Velocity.Y) * other.Mass) / (Mass + other.Mass);
+            drawVector = contactForce;
 
+            if (Mass == float.PositiveInfinity)
+            {
+                other.Velocity += contactForce * other.Mass;
+            }
+            else if (other.Mass == float.PositiveInfinity)
+            {
+                Velocity -= other.Position - Position;
+            }
+            else
+            {
+                Velocity -= contactForce * other.Mass;
+                other.Velocity += contactForce * Mass;
+            }
+            
             //calculate contact force
             //calculate friction force
             //apply forces to velocities
@@ -78,9 +95,9 @@ namespace PhysicsLibrary
 
         public void DrawImpulse(SpriteBatch spriteBatch, Texture2D pixel)
         {
-            //var angle = (float)(Math.Atan2(impulse.Y, impulse.X));
+            float angle = (float)(Math.Atan2(drawVector.Y, drawVector.X));
 
-            //spriteBatch.Draw(pixel, Center, null, null, new Vector2(0, 0.5f), angle, new Vector2(impulse.Length(), 1), Microsoft.Xna.Framework.Color.Red, SpriteEffects.None, 0);
+            spriteBatch.Draw(pixel, Center, null, null, new Vector2(0, 0.5f), angle, new Vector2(drawVector.Length(), 1), Microsoft.Xna.Framework.Color.Red, SpriteEffects.None, 0);
         }
 
         public virtual bool Intersects(PhysicsObject other)

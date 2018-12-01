@@ -45,7 +45,7 @@ namespace Tester
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 2, 1f);
+            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 100, 1f);
             playerLeft = Content.Load<Texture2D>("playerLeft");
             playerForward = Content.Load<Texture2D>("playerForward");
             playerRight = Content.Load<Texture2D>("playerRight");
@@ -108,9 +108,7 @@ namespace Tester
             }
 
             player.Update();
-            player.Velocity *= 0.99f;
             floor.Update();
-            floor.Velocity *= 0.99f;
             var derp = floor as PhysicsObject;
             player.UpdateRelative(ref derp);
             player.Position = new Vector2(player.Position.X % GraphicsDevice.Viewport.Width, player.Position.Y % GraphicsDevice.Viewport.Height);
