@@ -58,6 +58,51 @@ namespace PhysicsLibrary
 
         Vector2 drawVector;
 
+        class Ray
+        {
+            public PointF Position;
+            public Vector2 Direction;
+
+            public Ray(PointF position, Vector2 direction)
+            {
+                Position = position;
+                Direction = Vector2.Normalize(direction);
+            }
+        }
+
+        float[] rayTrace(RectangleF AABB, Ray ray)
+        {
+            float t;
+            Vector2 dirfrac;
+            dirfrac = Vector2.One / ray.Direction;
+            // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
+            // r.org is origin of ray
+            float t1 = (AABB.Location.X - ray.Position.X) * dirfrac.X;
+            float t2 = ((AABB.Location + AABB.Size).X - ray.Position.X) * dirfrac.X;
+            float t3 = (AABB.Location.Y - ray.Position.Y) * dirfrac.Y;
+            float t4 = ((AABB.Location + AABB.Size).Y - ray.Position.Y) * dirfrac.Y;
+
+            float tmin = Math.Max(Math.Min(t1, t2), Math.Min(t3, t4));
+            float tmax = Math.Min(Math.Max(t1, t2), Math.Max(t3, t4));
+            
+            // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
+            if (tmax < 0)
+            {
+                t = tmax;
+                return new float[] { };
+            }
+
+            // if tmin > tmax, ray doesn't intersect AABB
+            if (tmin > tmax)
+            {
+                t = tmax;
+                return new float[] { };
+            }
+
+            t = tmin;
+            return new float[] { t, t1, t2, t3, t4 };
+        }
+
         public virtual void UpdateRelative(ref PhysicsObject other)
         {
             drawVector = other.Position - Position;
@@ -70,27 +115,38 @@ namespace PhysicsLibrary
                 return;
             }
 
-            Vector2 contactForce = (new Vector2(-Velocity.X, Velocity.Y) * Mass + new Vector2(-other.Velocity.X, other.Velocity.Y) * other.Mass) / (Mass + other.Mass);
-            drawVector = contactForce;
-
-            if (Mass == float.PositiveInfinity)
+            RectangleF combinedAABB = new RectangleF(Position.X, Position.Y, Hitbox.Width + other.Hitbox.Width, other.Hitbox.Width + other.Hitbox.Height);
+            PointF combinedPoint = new PointF(other.Position.X, other.Position.Y);
+            Vector2 combinedVelocity = other.Velocity - Velocity;
+            float[] tValues = rayTrace(combinedAABB, new Ray(combinedPoint, combinedVelocity));
+            if (tValues.Length == 0)
             {
-                other.Velocity += contactForce * other.Mass;
+                //no intersection
+                return;
             }
-            else if (other.Mass == float.PositiveInfinity)
+
+            Vector2 collisionNormal = Vector2.Zero;
+
+            if (tValues[0] == tValues[1])
             {
-                Velocity -= other.Position - Position;
+                collisionNormal = new Vector2(-1, 0);
+            }
+            else if (tValues[0] == tValues[2])
+            {
+                collisionNormal = new Vector2(1, 0);
+            }
+            else if (tValues[0] == tValues[3])
+            {
+                collisionNormal = new Vector2(0, -1);
+            }
+            else if (tValues[0] == tValues[4])
+            {
+                collisionNormal = new Vector2(0, 1);
             }
             else
             {
-                Velocity -= contactForce * other.Mass;
-                other.Velocity += contactForce * Mass;
+                throw new Exception("Collision normal broke");
             }
-            
-            //calculate contact force
-            //calculate friction force
-            //apply forces to velocities
-
         }
 
         public void DrawImpulse(SpriteBatch spriteBatch, Texture2D pixel)
