@@ -45,7 +45,7 @@ namespace Tester
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 100, 1f);
+            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, float.PositiveInfinity, 1f);
             playerLeft = Content.Load<Texture2D>("playerLeft");
             playerForward = Content.Load<Texture2D>("playerForward");
             playerRight = Content.Load<Texture2D>("playerRight");

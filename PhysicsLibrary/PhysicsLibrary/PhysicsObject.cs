@@ -38,7 +38,7 @@ namespace PhysicsLibrary
         }
         public Vector2 Center => Hitbox.Location.ToVector2() + new Vector2(Hitbox.Width / 2f, Hitbox.Height / 2f);
         public Vector2 Momentum => Velocity * Mass;
-        
+
         public PhysicsObject(RectangleF hitbox, Vector2 velocity, float mass, float restitution)
         {
             Hitbox = hitbox;
@@ -75,8 +75,6 @@ namespace PhysicsLibrary
             float t;
             Vector2 dirfrac;
             dirfrac = Vector2.One / ray.Direction;
-            // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
-            // r.org is origin of ray
             float t1 = (AABB.Location.X - ray.Position.X) * dirfrac.X;
             float t2 = ((AABB.Location + AABB.Size).X - ray.Position.X) * dirfrac.X;
             float t3 = (AABB.Location.Y - ray.Position.Y) * dirfrac.Y;
@@ -84,12 +82,12 @@ namespace PhysicsLibrary
 
             float tmin = Math.Max(Math.Min(t1, t2), Math.Min(t3, t4));
             float tmax = Math.Min(Math.Max(t1, t2), Math.Max(t3, t4));
-            
+
             // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
             if (tmax < 0)
             {
                 t = tmax;
-                return new float[] { };
+                //return new float[] { };
             }
 
             // if tmin > tmax, ray doesn't intersect AABB
@@ -105,7 +103,7 @@ namespace PhysicsLibrary
 
         public virtual void UpdateRelative(ref PhysicsObject other)
         {
-            drawVector = other.Position - Position;
+            drawVector = Vector2.Zero;
             if (!Hitbox.IntersectsWith(other.Hitbox))
             {
                 return;
@@ -115,7 +113,7 @@ namespace PhysicsLibrary
                 return;
             }
 
-            RectangleF combinedAABB = new RectangleF(Position.X, Position.Y, Hitbox.Width + other.Hitbox.Width, other.Hitbox.Width + other.Hitbox.Height);
+            RectangleF combinedAABB = new RectangleF(Position.X, Position.Y, Hitbox.Width + other.Hitbox.Width, Hitbox.Height + other.Hitbox.Height);
             PointF combinedPoint = new PointF(other.Position.X, other.Position.Y);
             Vector2 combinedVelocity = other.Velocity - Velocity;
             float[] tValues = rayTrace(combinedAABB, new Ray(combinedPoint, combinedVelocity));
@@ -124,22 +122,21 @@ namespace PhysicsLibrary
                 //no intersection
                 return;
             }
-
             Vector2 collisionNormal = Vector2.Zero;
 
-            if (tValues[0] == tValues[1])
+            if (tValues[0].Equals(tValues[1]))
             {
                 collisionNormal = new Vector2(-1, 0);
             }
-            else if (tValues[0] == tValues[2])
+            else if (tValues[0].Equals(tValues[2]))
             {
                 collisionNormal = new Vector2(1, 0);
             }
-            else if (tValues[0] == tValues[3])
+            else if (tValues[0].Equals(tValues[3]))
             {
                 collisionNormal = new Vector2(0, -1);
             }
-            else if (tValues[0] == tValues[4])
+            else if (tValues[0].Equals(tValues[4]))
             {
                 collisionNormal = new Vector2(0, 1);
             }
@@ -147,6 +144,14 @@ namespace PhysicsLibrary
             {
                 throw new Exception("Collision normal broke");
             }
+            drawVector = collisionNormal * 100;
+
+            float restitution = Math.Min(Restitution, other.Restitution);
+
+            float impulseMagnitude = Vector2.Dot((-(1 + restitution) * combinedVelocity), collisionNormal) / Vector2.Dot(collisionNormal, collisionNormal * (1f / Mass + 1f / other.Mass));
+
+            other.Velocity += impulseMagnitude / other.Mass * collisionNormal;
+            Velocity -= impulseMagnitude / Mass * collisionNormal;
         }
 
         public void DrawImpulse(SpriteBatch spriteBatch, Texture2D pixel)
