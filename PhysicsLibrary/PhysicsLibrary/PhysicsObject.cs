@@ -75,6 +75,14 @@ namespace PhysicsLibrary
             float t;
             Vector2 dirfrac;
             dirfrac = Vector2.One / ray.Direction;
+            if (dirfrac.X.Equals(float.NaN))
+            {
+                dirfrac.X = float.NegativeInfinity;
+            }
+            if (dirfrac.Y.Equals(float.NaN))
+            {
+                dirfrac.Y = float.NegativeInfinity;
+            }
             float t1 = (AABB.Location.X - ray.Position.X) * dirfrac.X;
             float t2 = ((AABB.Location + AABB.Size).X - ray.Position.X) * dirfrac.X;
             float t3 = (AABB.Location.Y - ray.Position.Y) * dirfrac.Y;
@@ -94,7 +102,7 @@ namespace PhysicsLibrary
             if (tmin > tmax)
             {
                 t = tmax;
-                return new float[] { };
+                //return new float[] { };
             }
 
             t = tmin;
@@ -126,11 +134,11 @@ namespace PhysicsLibrary
 
             if (tValues[0].Equals(tValues[1]))
             {
-                collisionNormal = new Vector2(-1, 0);
+                collisionNormal = new Vector2(1, 0);
             }
             else if (tValues[0].Equals(tValues[2]))
             {
-                collisionNormal = new Vector2(1, 0);
+                collisionNormal = new Vector2(-1, 0);
             }
             else if (tValues[0].Equals(tValues[3]))
             {
