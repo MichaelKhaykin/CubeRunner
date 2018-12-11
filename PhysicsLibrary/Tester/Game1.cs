@@ -45,7 +45,7 @@ namespace Tester
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, float.PositiveInfinity, 1f);
+            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 10, 1f);
             playerLeft = Content.Load<Texture2D>("playerLeft");
             playerForward = Content.Load<Texture2D>("playerForward");
             playerRight = Content.Load<Texture2D>("playerRight");
@@ -109,8 +109,8 @@ namespace Tester
 
             player.Update();
             floor.Update();
-            var derp = floor as PhysicsObject;
-            player.UpdateRelative(ref derp);
+            var derp = player as PhysicsObject;
+            floor.UpdateRelative(ref derp);
             player.Position = new Vector2(player.Position.X % GraphicsDevice.Viewport.Width, player.Position.Y % GraphicsDevice.Viewport.Height);
             while (player.Position.Y < 0)
             {
@@ -127,8 +127,8 @@ namespace Tester
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
-            floor.Draw(spriteBatch);
-            player.Draw(spriteBatch);
+            floor.Draw(spriteBatch, pixel);
+            player.Draw(spriteBatch, pixel);
             player.DrawImpulse(spriteBatch, pixel);
             // TODO: Add your drawing code here
             spriteBatch.End();

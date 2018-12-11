@@ -19,9 +19,10 @@ namespace PhysicsLibrary
             Tint = tint;
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public void Draw(SpriteBatch spriteBatch, Texture2D pixel)
         {
             spriteBatch.Draw(Texture, Position, Tint);
+            spriteBatch.Draw(pixel, Position, null, new Microsoft.Xna.Framework.Color(100, 100, 200, 100), 0f, Vector2.Zero, new Vector2(Hitbox.Width, Hitbox.Height), SpriteEffects.None, 0f);
         }
     }
 }
