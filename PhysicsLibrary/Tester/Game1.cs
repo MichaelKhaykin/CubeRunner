@@ -20,6 +20,11 @@ namespace Tester
         PhysicsSprite floor;
         PhysicsSprite player;
 
+        PhysicsObject leftBounds;
+        PhysicsObject topBounds;
+        PhysicsObject rightBounds;
+        PhysicsObject bottomBounds;
+
         Texture2D playerLeft;
         Texture2D playerForward;
         Texture2D playerRight;
@@ -52,9 +57,14 @@ namespace Tester
             player = new PhysicsSprite(new Vector2(100, 84), playerForward, Color.White, Vector2.Zero, 1, 1f);
             playerDirection = Directions.Forward;
             pixel = Content.Load<Texture2D>("pixel");
+
+            leftBounds = new PhysicsObject(new System.Drawing.RectangleF(-20, 0, 20, GraphicsDevice.Viewport.Height), Vector2.Zero, float.PositiveInfinity, 1f);
+            topBounds = new PhysicsObject(new System.Drawing.RectangleF(0, -20, GraphicsDevice.Viewport.Width, 20), Vector2.Zero, float.PositiveInfinity, 1f);
+            rightBounds = new PhysicsObject(new System.Drawing.RectangleF(GraphicsDevice.Viewport.Width, 0, 20, GraphicsDevice.Viewport.Height), Vector2.Zero, float.PositiveInfinity, 1f);
+            bottomBounds = new PhysicsObject(new System.Drawing.RectangleF(0, GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, 20), Vector2.Zero, float.PositiveInfinity, 1f);
             // TODO: use this.Content to load your game content here
         }
-        
+
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
@@ -109,17 +119,18 @@ namespace Tester
 
             player.Update();
             floor.Update();
-            var derp = player as PhysicsObject;
-            floor.UpdateRelative(ref derp);
-            player.Position = new Vector2(player.Position.X % GraphicsDevice.Viewport.Width, player.Position.Y % GraphicsDevice.Viewport.Height);
-            while (player.Position.Y < 0)
-            {
-                player.Position = new Vector2(player.Position.X, player.Position.Y + GraphicsDevice.Viewport.Height);
-            }
-            while (player.Position.X < 0)
-            {
-                player.Position = new Vector2(player.Position.X + GraphicsDevice.Viewport.Width, player.Position.Y);
-            }
+            var playerObject = player as PhysicsObject;
+            var floorObject = floor as PhysicsObject;
+            floor.UpdateRelative(ref playerObject);
+            
+            leftBounds.UpdateRelative(ref playerObject);
+            leftBounds.UpdateRelative(ref floorObject);
+            topBounds.UpdateRelative(ref playerObject);
+            topBounds.UpdateRelative(ref floorObject);
+            rightBounds.UpdateRelative(ref playerObject);
+            rightBounds.UpdateRelative(ref floorObject);
+            bottomBounds.UpdateRelative(ref playerObject);
+            bottomBounds.UpdateRelative(ref floorObject);
             base.Update(gameTime);
         }
         
