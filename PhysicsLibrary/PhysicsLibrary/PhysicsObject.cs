@@ -54,10 +54,9 @@ namespace PhysicsLibrary
             {
                 Velocity.Y -= PhysicsConstants.Gravity;
             }
+            Velocity *= 1 - PhysicsConstants.Drag;
         }
-
-        Vector2 drawVector;
-
+        
         class Ray
         {
             public PointF Position;
@@ -91,27 +90,22 @@ namespace PhysicsLibrary
             float tmin = Math.Max(Math.Min(t1, t2), Math.Min(t3, t4));
             float tmax = Math.Min(Math.Max(t1, t2), Math.Max(t3, t4));
 
-            // if tmax < 0, ray (line) is intersecting AABB, but the whole AABB is behind us
             if (tmax < 0)
             {
                 t = tmax;
-                //return new float[] { };
             }
-
-            // if tmin > tmax, ray doesn't intersect AABB
+            
             if (tmin > tmax)
             {
                 t = tmax;
-                //return new float[] { };
             }
 
             t = tmin;
             return new float[] { t, t1, t2, t3, t4 };
         }
-
+        
         public virtual void UpdateRelative(ref PhysicsObject other)
         {
-            drawVector = Vector2.Zero;
             if (!Hitbox.IntersectsWith(other.Hitbox))
             {
                 return;
@@ -152,7 +146,6 @@ namespace PhysicsLibrary
             {
                 throw new Exception("Collision normal broke");
             }
-            drawVector = collisionNormal * 100;
 
             float restitution = Math.Min(Restitution, other.Restitution);
 
@@ -161,14 +154,7 @@ namespace PhysicsLibrary
             other.Velocity += impulseMagnitude / other.Mass * collisionNormal;
             Velocity -= impulseMagnitude / Mass * collisionNormal;
         }
-
-        public void DrawImpulse(SpriteBatch spriteBatch, Texture2D pixel)
-        {
-            float angle = (float)(Math.Atan2(drawVector.Y, drawVector.X));
-
-            spriteBatch.Draw(pixel, Center, null, null, new Vector2(0, 0.5f), angle, new Vector2(drawVector.Length(), 1), Microsoft.Xna.Framework.Color.Red, SpriteEffects.None, 0);
-        }
-
+        
         public virtual bool Intersects(PhysicsObject other)
         {
             return Hitbox.IntersectsWith(other.Hitbox);

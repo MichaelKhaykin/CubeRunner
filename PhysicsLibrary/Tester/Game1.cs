@@ -50,18 +50,18 @@ namespace Tester
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, 10, 1f);
+            floor = new PhysicsSprite(new Vector2(100), Content.Load<Texture2D>("Block"), Color.White, Vector2.Zero, float.PositiveInfinity, 1f);
             playerLeft = Content.Load<Texture2D>("playerLeft");
             playerForward = Content.Load<Texture2D>("playerForward");
             playerRight = Content.Load<Texture2D>("playerRight");
-            player = new PhysicsSprite(new Vector2(100, 84), playerForward, Color.White, Vector2.Zero, 1, 1f);
+            player = new PhysicsSprite(new Vector2(100.125f, 84), playerForward, Color.White, Vector2.Zero, 1, 0.01f);
             playerDirection = Directions.Forward;
             pixel = Content.Load<Texture2D>("pixel");
 
-            leftBounds = new PhysicsObject(new System.Drawing.RectangleF(-20, 0, 20, GraphicsDevice.Viewport.Height), Vector2.Zero, float.PositiveInfinity, 1f);
-            topBounds = new PhysicsObject(new System.Drawing.RectangleF(0, -20, GraphicsDevice.Viewport.Width, 20), Vector2.Zero, float.PositiveInfinity, 1f);
-            rightBounds = new PhysicsObject(new System.Drawing.RectangleF(GraphicsDevice.Viewport.Width, 0, 20, GraphicsDevice.Viewport.Height), Vector2.Zero, float.PositiveInfinity, 1f);
-            bottomBounds = new PhysicsObject(new System.Drawing.RectangleF(0, GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width, 20), Vector2.Zero, float.PositiveInfinity, 1f);
+            leftBounds = new PhysicsObject(new System.Drawing.RectangleF(-20, -20, 20, GraphicsDevice.Viewport.Height + 20), Vector2.Zero, float.PositiveInfinity, 1f);
+            topBounds = new PhysicsObject(new System.Drawing.RectangleF(0, -20, GraphicsDevice.Viewport.Width + 20, 20), Vector2.Zero, float.PositiveInfinity, 1f);
+            rightBounds = new PhysicsObject(new System.Drawing.RectangleF(GraphicsDevice.Viewport.Width, 0, 20, GraphicsDevice.Viewport.Height + 20), Vector2.Zero, float.PositiveInfinity, 1f);
+            bottomBounds = new PhysicsObject(new System.Drawing.RectangleF(-20, GraphicsDevice.Viewport.Height, GraphicsDevice.Viewport.Width + 20, 20), Vector2.Zero, float.PositiveInfinity, 1f);
             // TODO: use this.Content to load your game content here
         }
 
@@ -75,6 +75,13 @@ namespace Tester
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
             keyboard = Keyboard.GetState();
+            if (keyboard.IsKeyDown(Keys.R))
+            {
+                player.Position = new Vector2(100.125f, 84);
+                player.Velocity = Vector2.Zero;
+                floor.Position = new Vector2(100, 100);
+                floor.Velocity = Vector2.Zero;
+            }
             if (keyboard.IsKeyDown(Keys.Space))
             {
                 player.Velocity = Vector2.Zero;
@@ -140,7 +147,6 @@ namespace Tester
             spriteBatch.Begin();
             floor.Draw(spriteBatch, pixel);
             player.Draw(spriteBatch, pixel);
-            player.DrawImpulse(spriteBatch, pixel);
             // TODO: Add your drawing code here
             spriteBatch.End();
             base.Draw(gameTime);
